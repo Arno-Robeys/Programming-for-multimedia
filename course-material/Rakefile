@@ -1,0 +1,85 @@
+require 'fileutils'
+require 'rake'
+require 'set'
+
+
+
+def topic_dependencies(topic)
+    `git ls-files topics/#{topic}`.lines.map(&:strip) + [ 'topics/ucll-slides.cls', 'topics/ucll-code.sty' ]
+end
+
+TOPIC_DIRECTORIES = Dir['topics/*'].select do |entry|
+    File.directory? entry
+end
+
+TOPICS = TOPIC_DIRECTORIES.map do |directory|
+    directory.split(%r{/}).last
+end
+
+
+directory 'dist/topics'
+
+def topic_task(topic)
+    file "dist/topics/#{topic}.pdf" => topic_dependencies(topic) do |task|
+        puts "<--- #{topic} --->"
+        Dir.chdir "topics/#{topic}" do
+            sh "pdflatex slides.tex"
+            sh "pdflatex slides.tex"
+        end
+
+        FileUtils.cp "topics/#{topic}/slides.pdf", "dist/topics/#{topic}.pdf"
+    end
+
+    file "dist/topics/#{topic}-handouts.pdf" => topic_dependencies(topic) do |task|
+        puts "<--- #{topic} handout --->"
+
+        Dir.chdir "topics/#{topic}" do
+            sh "pdflatex handouts.tex"
+            sh "pdflatex handouts.tex"
+        end
+
+        FileUtils.cp "topics/#{topic}/handouts.pdf", "dist/topics/#{topic}-handouts.pdf"
+    end
+
+    namespace :topic do
+        desc "Builds topic #{topic}"
+        task topic => [ "dist/topics/#{topic}.pdf", "dist/topics/#{topic}-handouts.pdf" ]
+    end
+end
+
+TOPICS.each do |topic|
+    topic_task topic
+end
+
+namespace :topic do
+    desc "Builds all topics"
+    task :all => TOPICS.map { |topic| "topic:#{topic}" }
+
+    desc "Uploads topics"
+    task :upload do
+        Dir.chdir 'dist' do
+            `ssh upload.leone.ucll.be rm -rf /home/frederic/courses/pvm/volume/slides/*`
+            puts `scp -r * upload.leone.ucll.be:/home/frederic/courses/pvm/volume/slides`
+        end
+    end
+end
+
+desc 'Builds all topics'
+task :topics => TOPICS.flat_map { |topic| [ "dist/topics/#{topic}.pdf", "dist/topics/#{topic}-handouts.pdf" ] }
+
+task :default => [ :topics ]
+
+namespace :overview do
+    desc 'Compile overview'
+    task :build do
+        Dir.chdir 'overview' do
+            sh 'npm start'
+        end
+    end
+
+    task :upload do
+        Dir.chdir 'overview/dist' do
+            puts `scp -r * upload.leone.ucll.be:/home/frederic/courses/pvm/volume/`
+        end
+    end
+end

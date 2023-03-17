@@ -1,0 +1,9 @@
+*.log
+*.aux
+*.toc
+*.out
+*.pdf
+*.nav
+*.snm
+*.fdb_latexmk
+*.fls
