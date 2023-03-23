@@ -1,5 +1,5 @@
 #define CATCH_CONFIG_MAIN
-#include "quotrest.h"
+#include "quotrest.cpp"
 #include "Catch.h"
 
 

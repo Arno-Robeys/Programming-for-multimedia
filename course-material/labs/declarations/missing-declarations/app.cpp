@@ -1,28 +1,23 @@
 #include <iostream>
 
-int main()
+int next_unsigned()
 {
-    std::cout << "Enter a value: ";
-    unsigned n = next_unsigned();
-
-    if (is_prime(n))
-    {
-        std::cout << n << " is prime" << std::endl;
-    }
-    else
-    {
-        std::cout << n << " is not prime" << std::endl;
-    }
-}
-
-unsigned next_unsigned()
-{
-    unsigned x;
+    int x;
     std::cin >> x;
     return x;
 }
 
-bool is_prime(unsigned n)
+bool is_divisible_by(int a, int b)
+{
+    return b != 0 ? a % b == 0 : false;
+}
+
+int sqr(int x)
+{
+    return x * x;
+}
+
+bool is_prime(int n)
 {
     if (n < 2)
     {
@@ -30,7 +25,7 @@ bool is_prime(unsigned n)
     }
     else
     {
-        unsigned k = 2;
+        int k = 2;
 
         while (sqr(k) <= n)
         {
@@ -46,12 +41,17 @@ bool is_prime(unsigned n)
     }
 }
 
-bool is_divisible_by(unsigned a, unsigned b)
+int main()
 {
-    return b != 0 ? a % b == 0 : false;
-}
+    std::cout << "Enter a value: ";
+    int n = next_unsigned();
 
-unsigned sqr(unsigned x)
-{
-    return x * x;
+    if (is_prime(n))
+    {
+        std::cout << n << " is prime" << std::endl;
+    }
+    else
+    {
+        std::cout << n << " is not prime" << std::endl;
+    }
 }
