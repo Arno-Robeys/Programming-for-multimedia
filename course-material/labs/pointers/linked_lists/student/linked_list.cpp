@@ -8,7 +8,13 @@
 */
 unsigned length(linked_list* lst)
 {
-    
+    unsigned count = 0;
+    while (lst != nullptr)
+    {
+		count++;
+		lst = lst->next;
+	}
+	return count;
 }
 
 /*
@@ -19,6 +25,13 @@ unsigned length(linked_list* lst)
 */
 linked_list* penultimate(linked_list* lst)
 {
+    if (lst == nullptr)
+		return nullptr;
+	if (lst->next == nullptr)
+		return nullptr;
+	if (lst->next->next == nullptr)
+		return lst;
+	return penultimate(lst->next);
     
 }
 
@@ -32,6 +45,11 @@ linked_list* penultimate(linked_list* lst)
 */
 linked_list* longest(linked_list* xs, linked_list* ys)
 {
+	if (length(xs) > length(ys))
+		return xs;
+	if (length(xs) < length(ys))
+		return ys;
+	return nullptr;
     
 }
 
@@ -42,6 +60,16 @@ linked_list* longest(linked_list* xs, linked_list* ys)
 */
 void make_cyclic(linked_list* lst)
 {
+	if (lst == nullptr)
+		return;
+	if (lst->next == nullptr)
+		return;
+	if (lst->next->next == nullptr)
+	{
+		lst->next->next = lst;
+		return;
+	}
+	make_cyclic(lst->next);
     
 }
 
@@ -55,5 +83,5 @@ void make_cyclic(linked_list* lst)
 */
 bool has_cycle(linked_list* lst)
 {
-    
+
 }
